@@ -1,0 +1,31 @@
+from controller import Robot                               #importing libraries
+
+TIME_STEP = 64
+robot = Robot()                                            #creating an object called Robot
+ds = []                                                    #declaring an empty list
+dsNames = ['ds_right', 'ds_left']                          #dsNames holds list value of sensor data such as ds_right value and ds_left value
+for i in range(2):                                         #looping for 2 times
+    ds.append(robot.getDevice(dsNames[i]))                 #appending the names to the empty list ds
+    ds[i].enable(TIME_STEP)
+wheels = []                     #declaring an empty list
+wheelsNames = ['wheel1', 'wheel2', 'wheel3', 'wheel4']     #the list wheelNames holds the wheel1, wheel2, wheel3, and wheel4
+for i in range(4):                                         #looping for 4 times
+    wheels.append(robot.getDevice(wheelsNames[i]))         #appending the wheel names to the empty list wheels
+    wheels[i].setPosition(float('inf'))                    #setting the positions of wheels
+    wheels[i].setVelocity(0.0)                             #setting the velocity of wheels
+avoidObstacleCounter = 0
+while robot.step(TIME_STEP) != -1:                         #if the time step is not equal to -1 then do below
+    leftSpeed = 1.0                                        #speed of left wheel value is 1.0
+    rightSpeed = 1.0                                       #speed of right wheel value is 1.0
+    if avoidObstacleCounter > 0:                           #if the value of obstacle counter is greater than 0 then do below
+        avoidObstacleCounter -= 1                          setting avoid obstacle counter value = avoidobstaclecounter - 1
+        leftSpeed = 1.0                                    #speed of left wheel value is 1.0
+        rightSpeed = -1.0                                  #speed of right wheel value is -1.0
+    else:  # read sensors                                  #if the above condition does not satisfies then do below
+        for i in range(2):                                 #looping for 2 times
+            if ds[i].getValue() < 950.0:                   #if value of ds per each loop if less then 950.0 then do below
+                avoidObstacleCounter = 100                 #setting avoid obstacle counter value = 100
+    wheels[0].setVelocity(leftSpeed)                       #speed of wheel 0 = leftspeed
+    wheels[1].setVelocity(rightSpeed)                      #speed of wheel 1 = rightspeed
+    wheels[2].setVelocity(leftSpeed)                       #speed of wheel 2 = leftspeed
+    wheels[3].setVelocity(rightSpeed)                      #speed of wheel 3 = rightspeed
